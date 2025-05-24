@@ -28,7 +28,6 @@ def print_all_players():
     for team in teams:
         for player_id in team['players']:
             cnt += 1
-            print(cnt)
             request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
             try:
                 player = request_for_player.json()
@@ -37,11 +36,16 @@ def print_all_players():
                 player = request_for_player.json()
             players_to_teams[player_id] = team['id']
             fullname = (player['name'] + " " + player['surname']).strip()
-            all_names.append(fullname)
+            if fullname:
+                all_names.append(fullname)
     print("\n".join(sorted(set(all_names))))
 
 
 def get_versus_stats(player1_id, player2_id):
+    if player1_id < 0 or player2_id < 0:
+        return 0
+    if player1_id not in players_to_teams or player2_id not in players_to_teams:
+        return 0
     player1_team = players_to_teams[player1_id]
     player2_team = players_to_teams[player2_id]
     count_of_matches = 0
@@ -57,7 +61,7 @@ def get_versus_stats(player1_id, player2_id):
 
 def get_stats_by_team(team_name):
     if team_name not in team_name_to_id:
-        return "Team not found :("
+        return "0 0 0"
     team_id = team_name_to_id[team_name]
     total_wins = 0
     total_loses = 0
