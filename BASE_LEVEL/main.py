@@ -34,7 +34,10 @@ def print_all_players():
             except requests.exceptions.JSONDecodeError:
                 time.sleep(60)
                 player = request_for_player.json()
-            players_to_teams[player_id] = team['id']
+            if player_id in players_to_teams:
+                players_to_teams[player_id].append(team['id'])
+            else:
+                players_to_teams[player_id] = [team['id']]
             fullname = (player['name'] + " " + player['surname']).strip()
             if fullname:
                 all_names.append(fullname)
@@ -46,15 +49,17 @@ def get_versus_stats(player1_id, player2_id):
         return 0
     if player1_id not in players_to_teams or player2_id not in players_to_teams:
         return 0
-    player1_team = players_to_teams[player1_id]
-    player2_team = players_to_teams[player2_id]
+    player1_teams = players_to_teams[player1_id]
+    player2_teams = players_to_teams[player2_id]
     count_of_matches = 0
-    if player1_team == player2_team:
-        return count_of_matches
-    for match in matches:
-        if (match['team1'] == player1_team or match['team2'] == player1_team) \
-            and (match['team1'] == player2_team or match['team2'] == player2_team):
-            count_of_matches += 1
+    for player1_team in player1_teams:
+        for player2_team in player2_teams:
+            if player1_team == player2_team:
+                continue
+            for match in matches:
+                if (match['team1'] == player1_team or match['team2'] == player1_team) \
+                    and (match['team1'] == player2_team or match['team2'] == player2_team):
+                    count_of_matches += 1
     return count_of_matches
 
 
