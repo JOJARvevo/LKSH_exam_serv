@@ -26,6 +26,7 @@ def print_all_players():
     all_names = []
     cnt = 0
     for team in teams:
+        print(team['name'])
         for player_id in team['players']:
             cnt += 1
             request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
@@ -36,8 +37,12 @@ def print_all_players():
                 player = request_for_player.json()
             if player_id in players_to_teams:
                 players_to_teams[player_id].append(team['id'])
+                print("PLAYER ID", player_id)
             else:
                 players_to_teams[player_id] = [team['id']]
+                if cnt % 50 == 0:
+                    print(cnt)
+
             fullname = (player['name'] + " " + player['surname']).strip()
             if fullname:
                 all_names.append(fullname)
@@ -102,7 +107,7 @@ for users_input in stdin:
     users_input = users_input.split()
     command, data = users_input[0], users_input[1:]
     if command == 'stats?':
-        team_name = data.strip('"')
+        team_name = " ".join(data).strip('"')
         print(get_stats_by_team(team_name))
     elif command == 'versus?':
         try:

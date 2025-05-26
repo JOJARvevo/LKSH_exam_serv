@@ -7,13 +7,10 @@ from modules.server_requests import *
 
 app = Flask(__name__)
 
-app.secret_key = 'secret_key'
-
 @app.route("/versus", methods=['GET'])
 def versus_endpoint():
     player1_id = request.args.get('player1_id')
     player2_id = request.args.get('player2_id')
-    print(player1_id, player2_id)
     try:
         versus_statistic = get_versus_stats(int(player1_id), int(player2_id))
         if not versus_statistic['status']:
