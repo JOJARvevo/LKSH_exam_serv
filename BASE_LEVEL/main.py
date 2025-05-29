@@ -26,7 +26,6 @@ def print_all_players():
     all_names = []
     cnt = 0
     for team in teams:
-        print(team['name'])
         for player_id in team['players']:
             cnt += 1
             request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
@@ -37,12 +36,8 @@ def print_all_players():
                 player = request_for_player.json()
             if player_id in players_to_teams:
                 players_to_teams[player_id].append(team['id'])
-                print("PLAYER ID", player_id)
             else:
                 players_to_teams[player_id] = [team['id']]
-                if cnt % 50 == 0:
-                    print(cnt)
-
             fullname = (player['name'] + " " + player['surname']).strip()
             if fullname:
                 all_names.append(fullname)
@@ -62,8 +57,9 @@ def get_versus_stats(player1_id, player2_id):
             if player1_team == player2_team:
                 continue
             for match in matches:
-                if (match['team1'] == player1_team or match['team2'] == player1_team) \
-                    and (match['team1'] == player2_team or match['team2'] == player2_team):
+                if match['team1'] == player1_team and match['team2'] == player2_team:
+                    count_of_matches += 1
+                elif match['team1'] == player2_team and match['team2'] == player1_team:
                     count_of_matches += 1
     return count_of_matches
 
@@ -113,6 +109,6 @@ for users_input in stdin:
         try:
             print(get_versus_stats(int(data[0]), int(data[1])))
         except TypeError:
-            print("some of ID is not a number")
+            print(0)
     else:
-        print("Unknown command, try another")
+        continue

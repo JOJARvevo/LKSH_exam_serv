@@ -1,15 +1,9 @@
 import time
-
 import requests
-
 from env.secret import token
-from modules.top_secret_messeage import message
+from ADVANCED_LEVEL.modules.top_secret_messeage import message
 
 BASE_URL = 'https://lksh-enter.ru'
-matches = []
-players_to_teams = {}
-team_name_to_id = {}
-teams = []
 
 def check_connection_to_server():
     request = requests.get(BASE_URL + "/", headers={'Authorization': token})
@@ -17,41 +11,54 @@ def check_connection_to_server():
         return 0
     return 1
 
+
 def login():
     json_data = {
         'reason': message
     }
     req = requests.post(BASE_URL + "/login", json=json_data, headers={'Authorization': token})
+    if req.status_code != 200:
+        return 0
+    return 1
 
-def init_all_matches():
-    global matches
+
+def request_all_matches():
     request = requests.get(BASE_URL + "/matches", headers={'Authorization': token})
-    matches = request.json()
+    if request.status_code != 200:
+        return []
+    try:
+        matches = request.json()
+        return matches
+    except requests.exceptions.JSONDecodeError:
+        print("TO MANY REQUESTS, SLEEP FOR 60 SECONDS")
+        time.sleep(60)
+        return request_all_matches()
 
-def init_all_teams():
-    global teams
+
+def request_all_teams():
     request = requests.get(BASE_URL + "/teams", headers={'Authorization': token})
+    if request.status_code != 200:
+        return []
     teams = request.json()
-    for team in teams:
-        team_name_to_id[team['name']] = team['id']
+    return teams
 
-def get_all_players():
-    global players_to_teams
-    all_names = []
+def request_all_players():
+    from ADVANCED_LEVEL.database import take_all_players_ids
+
+    all_players = []
     cnt = 0
-    for team in teams:
-        for player_id in team['players']:
-            cnt += 1
+    players_ids = take_all_players_ids()
+    for player_id in players_ids:
+        cnt += 1
+        player_id = player_id[0]
+        print(f"LOADING PLAYERS {cnt}/433")
+        request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
+        try:
+            player = request_for_player.json()
+        except requests.exceptions.JSONDecodeError:
+            print("TO MANY REQUESTS, SLEEP FOR 60 SECONDS")
+            time.sleep(60)
             request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
-            try:
-                player = request_for_player.json()
-            except requests.exceptions.JSONDecodeError:
-                time.sleep(60)
-                player = request_for_player.json()
-            if player_id in players_to_teams:
-                players_to_teams[player_id].append(team['id'])
-            else:
-                players_to_teams[player_id] = [team['id']]
-            fullname = (player['name'] + " " + player['surname']).strip()
-            if fullname:
-                all_names.append(fullname)
+            player = request_for_player.json()
+        all_players.append(player)
+    return all_players

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика противостояния</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .versus-title {
+            font-size: 2.2em;
+            margin: 10px 0;
+        }
+        .match-count {
+            color: #666;
+            font-size: 1.2em;
+        }
+        .matches-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .matches-table th {
+            background-color: #f2f2f2;
+            padding: 12px;
+            text-align: left;
+        }
+        .matches-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .matches-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .score {
+            font-weight: bold;
+            text-align: center;
+        }
+        .team-cell {
+            width: 35%;
+        }
+        .winner {
+            color: #2ecc71;
+        }
+        .loser {
+            color: #e74c3c;
+        }
+        .draw {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="versus-title">{{ data.player1_name }} vs {{ data.player2_name }}</h1>
+        <p class="match-count">Всего матчей: {{ data.count_of_matches }}</p>
+    </div>
+
+    <table class="matches-table">
+        <thead>
+            <tr>
+                <th class="team-cell">{{ data.player1_name }}</th>
+                <th class="team-cell">{{ data.player2_name }}</th>
+                <th>Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in data.matches %}
+            {% set team1, team2, score1, score2 = match %}
+            <tr>
+                <td>{{ team1 }}</td>
+                <td>{{ team2 }}</td>
+                <td class="score">
+                    {% if score1 > score2 %}
+                        <span class="winner">{{ score1 }}</span> : <span class="loser">{{ score2 }}</span>
+                    {% elif score1 < score2 %}
+                        <span class="loser">{{ score1 }}</span> : <span class="winner">{{ score2 }}</span>
+                    {% else %}
+                        <span class="draw">{{ score1 }}</span> : <span class="draw">{{ score2 }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
