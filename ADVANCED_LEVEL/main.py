@@ -63,7 +63,7 @@ def player_goals_statistic():
         player_statistic = get_all_goals_of_player(int(player_id))
         if not player_statistic['status']:
             abort(400)
-        return player_statistic
+        return player_statistic['goals']
     except Exception:
         abort(400)
 

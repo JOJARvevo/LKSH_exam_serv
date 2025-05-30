@@ -87,6 +87,13 @@ def get_stats_by_team(team_name):
 
 def get_all_goals_of_player(player_id):
     statistic = {
-        'status': 0
+        'status': 0,
+        'goals': []
     }
-    return []
+    goals = get_all_players_goals(player_id)
+    if not len(goals):
+        return statistic
+    formated_goals = [{'match': goal[0], 'minute': goal[1]} for goal in goals]
+    statistic['status'] = 1
+    statistic['goals'] = formated_goals
+    return statistic
