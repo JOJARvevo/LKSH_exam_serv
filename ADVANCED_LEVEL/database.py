@@ -1,6 +1,8 @@
 import sqlite3
 
-from ADVANCED_LEVEL.modules.server_requests import request_all_teams, request_all_players, request_all_matches, login
+from ADVANCED_LEVEL.modules.server_requests import request_all_teams, request_all_players, request_all_matches, login, \
+    request_all_goals
+
 
 def rebuild_db():
     login()
@@ -8,6 +10,7 @@ def rebuild_db():
     init_all_teams(request_all_teams())
     init_all_players(request_all_players())
     init_all_matches(request_all_matches())
+    init_all_goals(request_all_goals())
 
 
 def init_all_matches(matches):
@@ -37,6 +40,13 @@ def init_all_teams(teams):
             players_data.append((team['id'], player_id))
     cursor.executemany("INSERT INTO teams (team_id, team_name) VALUES(?,?)", teams_data)
     cursor.executemany("INSERT INTO players_to_teams (team_id, player_id) VALUES(?,?)", players_data)
+    conn.commit()
+    conn.close()
+
+def init_all_goals(goals):
+    conn = sqlite3.connect("data/database.db")
+    cursor = conn.cursor()
+    cursor.executemany("INSERT INTO goals (goal_id, player_id, match_id, minute) VALUES(?,?,?,?)", goals)
     conn.commit()
     conn.close()
 
@@ -83,6 +93,14 @@ def get_player_name_by_id(player_id):
     player_name = cursor.execute("SELECT name, surname FROM players WHERE player_id = ?", (player_id,)).fetchone()
     conn.close()
     return player_name
+
+def get_all_players_goals(player_id):
+    conn = sqlite3.connect("data/database.db")
+    cursor = conn.cursor()
+    players_goals = cursor.execute("SELECT match_id, minute FROM goals WHERE player_id = ?", (player_id,)).fetchall()
+    conn.close()
+    return players_goals
+
 
 def clear_db():
     conn = sqlite3.connect("data/database.db")

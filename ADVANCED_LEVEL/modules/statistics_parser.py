@@ -20,7 +20,6 @@ def get_versus_stats(player1_id, player2_id):
     statistic['player2_name'] = " ".join(player2_name).strip()
     player1_teams = take_teams_by_id(player1_id)
     player2_teams = take_teams_by_id(player2_id)
-    print(player1_teams, player2_teams)
     matches = take_all_matches()
     for player1_team in player1_teams:
         player1_team = player1_team[0]

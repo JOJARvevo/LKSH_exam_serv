@@ -24,15 +24,12 @@ def init_all_teams():
 def print_all_players():
     global players_to_teams
     all_names = []
-    cnt = 0
     for team in teams:
         for player_id in team['players']:
-            cnt += 1
-            print(f"{cnt}/433")
             try:
                 request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
                 player = request_for_player.json()
-            except requests.exceptions.ConnectionError or requests.exceptions.JSONDecodeError:
+            except Exception:
                 time.sleep(60)
                 request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
                 player = request_for_player.json()
@@ -99,7 +96,7 @@ def get_stats_by_team(team_name):
 
 init_all_matches()
 init_all_teams()
-print_all_players()
+# print_all_players()
 
 for users_input in stdin:
     if not users_input.strip():

@@ -46,19 +46,41 @@ def request_all_players():
     from ADVANCED_LEVEL.database import take_all_players_ids
 
     all_players = []
-    cnt = 0
+    loading = 0
     players_ids = take_all_players_ids()
     for player_id in players_ids:
-        cnt += 1
+        loading += 1
         player_id = player_id[0]
-        print(f"LOADING PLAYERS {cnt}/433")
-        request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
+        print(f"LOADING PLAYERS {loading}/433")
         try:
+            request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
             player = request_for_player.json()
-        except requests.exceptions.JSONDecodeError:
+        except Exception:
             print("TO MANY REQUESTS, SLEEP FOR 60 SECONDS")
             time.sleep(60)
             request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
             player = request_for_player.json()
         all_players.append(player)
     return all_players
+
+def request_all_goals():
+    from ADVANCED_LEVEL.database import take_all_matches
+
+    all_goals = []
+    loading = 0
+    matches = take_all_matches()
+    count_of_matches = len(matches)
+    for match in matches:
+        loading += 1
+        print(f"LOADING GOALS {loading}/{count_of_matches}")
+        try:
+            request_for_goals = requests.get(BASE_URL + f"/goals", json={"match_id": match['match_id']}, headers={'Authorization': token})
+            goals = request_for_goals.json()
+        except Exception:
+            print("TO MANY REQUESTS, SLEEP FOR 60 SECONDS")
+            time.sleep(60)
+            request_for_goals = requests.get(BASE_URL + f"/goals", json={"match_id": match['match_id']}, headers={'Authorization': token})
+            goals = request_for_goals.json()
+        all_goals += goals
+    result_goals = [(goal_stats['id'], goal_stats['player'], goal_stats['match'], goal_stats['minute']) for goal_stats in all_goals]
+    return result_goals

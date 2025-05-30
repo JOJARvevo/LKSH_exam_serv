@@ -5,17 +5,6 @@ from ADVANCED_LEVEL.database import rebuild_db
 
 app = Flask(__name__)
 
-@app.route("/front/versus", methods=['GET'])
-def versus_endpoint_front():
-    player1_id = request.args.get('player1_id')
-    player2_id = request.args.get('player2_id')
-    try:
-        versus_statistic = get_versus_stats(int(player1_id), int(player2_id))
-        if not versus_statistic['status']:
-            abort(400)
-        return render_template('versus.html', data=versus_statistic)
-    except TypeError or ValueError:
-        abort(400)
 
 @app.route("/versus", methods=['GET'])
 def versus_endpoint():
@@ -26,8 +15,22 @@ def versus_endpoint():
         if not versus_statistic['status']:
             abort(400)
         return versus_statistic
-    except TypeError or ValueError:
+    except Exception:
         abort(400)
+
+
+@app.route("/front/versus", methods=['GET'])
+def versus_endpoint_front():
+    player1_id = request.args.get('player1_id')
+    player2_id = request.args.get('player2_id')
+    try:
+        versus_statistic = get_versus_stats(int(player1_id), int(player2_id))
+        if not versus_statistic['status']:
+            abort(400)
+        return render_template('versus.html', data=versus_statistic)
+    except Exception:
+        abort(400)
+
 
 @app.route("/stats", methods=['GET'])
 def team_stats_endpoint():
@@ -37,7 +40,7 @@ def team_stats_endpoint():
         if not team_statistic['status']:
             abort(400)
         return team_statistic
-    except AttributeError or TypeError or ValueError:
+    except Exception:
         abort(400)
 
 
@@ -49,8 +52,9 @@ def team_stats_endpoint_front():
         if not team_statistic['status']:
             abort(400)
         return render_template('team.html', data=team_statistic)
-    except AttributeError or TypeError or ValueError:
+    except Exception:
         abort(400)
+
 
 @app.route("/goals", methods=['GET'])
 def player_goals_statistic():
@@ -60,10 +64,8 @@ def player_goals_statistic():
         if not player_statistic['status']:
             abort(400)
         return player_statistic
-        # return render_template('goals.html', data=player_statistic)
-    except TypeError or ValueError:
+    except Exception:
         abort(400)
-
 
 
 if __name__ == "__main__":
