@@ -28,11 +28,13 @@ def print_all_players():
     for team in teams:
         for player_id in team['players']:
             cnt += 1
-            request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
+            print(f"{cnt}/433")
             try:
+                request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
                 player = request_for_player.json()
-            except requests.exceptions.JSONDecodeError:
+            except requests.exceptions.ConnectionError or requests.exceptions.JSONDecodeError:
                 time.sleep(60)
+                request_for_player = requests.get(BASE_URL + f"/players/{player_id}", headers={'Authorization': token})
                 player = request_for_player.json()
             if player_id in players_to_teams:
                 players_to_teams[player_id].append(team['id'])
@@ -100,15 +102,22 @@ init_all_teams()
 print_all_players()
 
 for users_input in stdin:
+    if not users_input.strip():
+        continue
     users_input = users_input.split()
-    command, data = users_input[0], users_input[1:]
+    command = users_input[0]
     if command == 'stats?':
-        team_name = " ".join(data).strip('"')
-        print(get_stats_by_team(team_name))
+        try:
+            team_name = " ".join(users_input[1:]).strip('"')
+            print(get_stats_by_team(team_name))
+        except Exception:
+            print(0, 0, 0)
     elif command == 'versus?':
         try:
-            print(get_versus_stats(int(data[0]), int(data[1])))
-        except TypeError:
+            player1_id = int(users_input[1])
+            player2_id = int(users_input[2])
+            print(get_versus_stats(player1_id, player2_id))
+        except Exception:
             print(0)
     else:
         continue

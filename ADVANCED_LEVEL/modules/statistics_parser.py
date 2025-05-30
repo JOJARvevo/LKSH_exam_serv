@@ -87,4 +87,7 @@ def get_stats_by_team(team_name):
     return statistic
 
 def get_all_goals_of_player(player_id):
-   return []
+    statistic = {
+        'status': 0
+    }
+    return []
