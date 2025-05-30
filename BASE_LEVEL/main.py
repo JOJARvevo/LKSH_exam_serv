@@ -96,7 +96,7 @@ def get_stats_by_team(team_name):
 
 init_all_matches()
 init_all_teams()
-# print_all_players()
+print_all_players()
 
 for users_input in stdin:
     if not users_input.strip():
