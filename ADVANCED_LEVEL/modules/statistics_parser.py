@@ -1,5 +1,5 @@
 from ADVANCED_LEVEL.database import (take_all_matches, take_teams_by_id,
-                                     get_team_name_by_id, get_player_name_by_id, take_team_id_by_name)
+                                     get_team_name_by_id, get_player_name_by_id, take_team_id_by_name, get_all_players_goals)
 
 
 def get_versus_stats(player1_id, player2_id):
