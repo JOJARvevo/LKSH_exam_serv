@@ -93,7 +93,7 @@ def get_all_goals_of_player(player_id):
     goals = get_all_players_goals(player_id)
     if not len(goals):
         return statistic
-    formated_goals = [{'match': goal[0], 'minute': goal[1]} for goal in goals]
+    formated_goals = [{'match': goal[0], 'time': goal[1]} for goal in goals]
     statistic['status'] = 1
     statistic['goals'] = formated_goals
     return statistic
