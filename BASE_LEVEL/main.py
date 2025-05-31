@@ -1,9 +1,9 @@
 import requests
-from env.secret import token
 import time
 from sys import stdin
 
 BASE_URL = 'https://lksh-enter.ru'
+token = '0bf0cab971dfff8aa83275fafe534e7217a225d60b4695e62b688affcebe5b84'
 matches = []
 players_to_teams = {}
 team_name_to_id = {}

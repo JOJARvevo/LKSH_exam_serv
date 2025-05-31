@@ -1,9 +1,9 @@
 import time
 import requests
-from env.secret import token
 from ADVANCED_LEVEL.modules.top_secret_messeage import message
 
 BASE_URL = 'https://lksh-enter.ru'
+token = '0bf0cab971dfff8aa83275fafe534e7217a225d60b4695e62b688affcebe5b84'
 
 def check_connection_to_server():
     try:
