@@ -19,12 +19,12 @@ pip3 install -r ADVANCED_LEVEL/requirements.txt
 Для базового решения:
 ```
 cd BASE_LEVEL
-python3 main.py
+python main.py
 ```
 Для продвинутого решения:
 ```
 cd ADVANCED_LEVEL
-python3 main.py
+python main.py
 ```
 ## BASE LEVEL
 
